@@ -16,13 +16,13 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 #include <stm32f1xx.h>
 
 // STM32F103C8T6 - 64KB Flash Size      
-//#define DEV_FLASH_SIZE                    (64*1024)
+#define DEV_FLASH_SIZE                    (64*1024)
 
 // STM32F103CBT6 - 128KB Flash Size    
-#define DEV_FLASH_SIZE                      (128*1024)
+//#define DEV_FLASH_SIZE                      (128*1024)
 
 
-#define APP_OFFSET                          0x4000
+#define APP_OFFSET                          0x5000
 #define APP_ADDR                            (FLASH_BASE + APP_OFFSET)
 #define APP_SIZE                            (DEV_FLASH_SIZE - APP_OFFSET)
 #define CRC_ADDR                            (FLASH_BASE + DEV_FLASH_SIZE - 4)	//Last 32bit block of Flash
@@ -41,5 +41,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 #define BOOTKEY                             0x12345678
 
+//#define ADAPTER 1
 
 #endif

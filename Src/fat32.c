@@ -18,6 +18,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 #include "fat32.h"
 #include "ihex_parser.h"
 #include "crypt.h"
+#include "crypt.h"
 
 //-------------------------------------------------------
 
@@ -119,7 +120,7 @@ typedef union
 
 //-------------------------------------------------------
 
-static const char btldr_desc[] = "STM32 bootloader\nPlease drag and drop the intel hex file to this drive to update the appcode";
+static const char btldr_desc[] = "Обновление прошивки прибора:\n1.Перетащите файл прошивки в формате hex на диск\n2.Дождитесь записи файла\n3.По окончанию записи, окошко с диском должно закрыться";
 
 //-------------------------------------------------------
 
@@ -256,8 +257,12 @@ static void _fat32_read_dir_entry(uint8_t *b)
 {
     fat32_dir_entry_t *dir = (fat32_dir_entry_t*)b;
     memset(b, 0, FAT32_SECTOR_SIZE);
-    
-    memcpy(dir->DIR_Name, "BOOTLOADER ", 11);
+
+#ifdef ADAPTER
+    memcpy(dir->DIR_Name, "LIN_HEX    ", 11);
+#else
+    memcpy(dir->DIR_Name, "OBC_HEX    ", 11);
+#endif
     dir->DIR_Attr = FAT32_ATTR_VOLUME_ID;
     dir->DIR_NTRes = 0x00;
     dir->DIR_CrtTimeTenth = 0x00;

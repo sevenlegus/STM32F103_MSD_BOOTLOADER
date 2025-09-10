@@ -39,6 +39,7 @@ extern "C" {
 #include "stm32f1xx_ll_dma.h"
 #include "stm32f1xx.h"
 #include "stm32f1xx_ll_gpio.h"
+#include "btldr_config.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -68,8 +69,16 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define BTLDR_EN_Pin LL_GPIO_PIN_0
-#define BTLDR_EN_GPIO_Port GPIOA
+
+
+#ifdef ADAPTER
+	#define BTLDR_EN_Pin LL_GPIO_PIN_0
+	#define BTLDR_EN_GPIO_Port GPIOB
+#else
+	#define BTLDR_EN_Pin LL_GPIO_PIN_2
+	#define BTLDR_EN_GPIO_Port GPIOB
+#endif
+
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */

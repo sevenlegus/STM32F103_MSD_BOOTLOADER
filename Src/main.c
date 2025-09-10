@@ -63,6 +63,13 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 /* USER CODE BEGIN PV */
 
+#ifdef ADAPTER
+	#define LED_GREEN(x)  ((x)? (GPIOB->BSRR =(1<<14))  : (GPIOB->BSRR =(1<<30)));         //PB14
+	#define LED_RED(x)   ((x)? (GPIOB->BSRR =(1<<13))  : (GPIOB->BSRR =(1<<29)));       //PB13
+#else
+	#define BACKLIGTH(x) 	((x)?	LL_GPIO_ResetOutputPin(GPIOA, LL_GPIO_PIN_6)  : LL_GPIO_SetOutputPin(GPIOA, LL_GPIO_PIN_6))
+#endif
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -171,8 +178,17 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  
+
   /* USER CODE BEGIN 2 */
+
+#ifdef ADAPTER
+  LED_GREEN(1);
+  LED_RED(1);
+  HAL_Delay(100);
+  LED_GREEN(0);
+  LED_RED(0);
+#endif
+
 
  if(	/* Check for configured activation options */
     #if (BTLDR_ACT_NoAppExist > 0u)
@@ -189,10 +205,15 @@ int main(void)
     #endif
 	 )
   {
-#if(CONFIG_SUPPORT_CRYPT_MODE > 0u)
+/*#if(CONFIG_SUPPORT_CRYPT_MODE > 0u)
     crypt_init();
-#endif
+#endif*/
     MX_USB_DEVICE_Init();
+#ifdef ADAPTER
+  LED_GREEN(1);
+  LED_RED(1);
+#endif
+
     while(1)
     {
 #if (CONFIG_SOFT_RESET_AFTER_IHEX_EOF > 0u)
@@ -203,6 +224,7 @@ int main(void)
          SystemReset();
       }
 #endif
+
     }
   }
   else
@@ -298,6 +320,7 @@ static void MX_GPIO_Init(void)
   LL_GPIO_InitTypeDef GPIO_InitStruct = {0};
 
   /* GPIO Ports Clock Enable */
+  LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_GPIOB);
   LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_GPIOA);
 
   /**/
@@ -305,6 +328,18 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Mode = LL_GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = LL_GPIO_PULL_UP;
   LL_GPIO_Init(BTLDR_EN_GPIO_Port, &GPIO_InitStruct);
+
+  GPIO_InitStruct.Pin = LL_GPIO_PIN_13|LL_GPIO_PIN_14;
+  GPIO_InitStruct.Mode = LL_GPIO_MODE_OUTPUT;
+  GPIO_InitStruct.Pull = LL_GPIO_PULL_DOWN;
+  GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_LOW;
+  LL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+  GPIO_InitStruct.Pin = LL_GPIO_PIN_6;
+  GPIO_InitStruct.Mode = LL_GPIO_MODE_OUTPUT;
+  GPIO_InitStruct.Pull = LL_GPIO_PULL_DOWN;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  LL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
 }
 
